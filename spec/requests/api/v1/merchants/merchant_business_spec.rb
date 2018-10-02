@@ -1,18 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe Merchant, type: :model do
-  it { should have_many :items }
-  it { should have_many :invoices }
-  it { should have_many(:invoice_items).through(:invoices) }
-
-  describe 'Class Methods' do
-    it '.random' do
-      m1, m2, m3 = create_list(:merchant, 3)
-
-      expect(Merchant.random).to be_a(Merchant)
-    end
-
-    it '.top_merchants_by_revenue(x)' do
+describe 'Merchants API' do
+  describe 'All Merchants' do
+    it 'returns top x merchants by total revenue' do
       merchant1, merchant2, merchant3, merchant4 = create_list(:merchant, 4)
 
       # Merchant 1 Sales Data
@@ -47,7 +37,12 @@ RSpec.describe Merchant, type: :model do
       create_list(:invoice_item, 3, invoice: invoice7, unit_price: 10.25, quantity: 2)
       create(:transaction, invoice: invoice7, result: 'success')
 
-      expect(Merchant.top_merchants_by_revenue(3)).to eq([merchant2, merchant1, merchant3])
+      get '/api/v1/merchants/most_revenue?quantity=3'
+      top_merchants = JSON.parse(response.body)
+
+      expect(response).to be_successful
+      expect(top_merchants.count).to eq(3)
+      expect(top_merchants).to eq([merchant2.as_json, merchant1.as_json, merchant3.as_json])
     end
   end
 end
