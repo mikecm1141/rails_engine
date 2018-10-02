@@ -3,6 +3,7 @@ Rails.application.routes.draw do
 		namespace :v1 do
 			resources :merchants, only: %i[index show]
       resources :items, only: %i[index show]
+      resources :invoices, only: %i[index show]
 		end
 	end
 end
