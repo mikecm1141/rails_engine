@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :transaction do
-    invoice { nil }
-    credit_card_number { "" }
-    credit_card_expiration_date { "" }
-    result { "MyString" }
+    invoice { create(:invoice) }
+    credit_card_number { "5939305920395032" }
+    credit_card_expiration_date { "0920" }
+    result { %w[success failed].sample }
   end
 end
