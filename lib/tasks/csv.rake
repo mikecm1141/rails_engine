@@ -11,16 +11,16 @@ namespace :csv do
   		Item.create(row.to_h)
   	end
 
+    CSV.foreach('./lib/customers.csv', headers: true, header_converters: :symbol) do |row|
+      Customer.create(row.to_h)
+    end
+
   	CSV.foreach('./lib/invoices.csv', headers: true, header_converters: :symbol) do |row|
   		Invoice.create(row.to_h)
   	end
 
   	CSV.foreach('./lib/invoice_items.csv', headers: true, header_converters: :symbol) do |row|
   		InvoiceItem.create(row.to_h)
-  	end
-
-  	CSV.foreach('./lib/customers.csv', headers: true, header_converters: :symbol) do |row|
-  		Customer.create(row.to_h)
   	end
 
   	CSV.foreach('./lib/transactions.csv', headers: true, header_converters: :symbol) do |row|
