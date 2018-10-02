@@ -8,6 +8,7 @@ namespace :csv do
   	end
 
   	CSV.foreach('./lib/items.csv', headers: true, header_converters: :symbol) do |row|
+      row[:unit_price] = row[:unit_price].to_f / 100
   		Item.create(row.to_h)
   	end
 
@@ -20,6 +21,7 @@ namespace :csv do
   	end
 
   	CSV.foreach('./lib/invoice_items.csv', headers: true, header_converters: :symbol) do |row|
+      row[:unit_price] = row[:unit_price].to_f / 100
   		InvoiceItem.create(row.to_h)
   	end
 
