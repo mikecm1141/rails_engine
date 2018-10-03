@@ -1,19 +1,44 @@
 require 'rails_helper'
 
 RSpec.describe Merchant, type: :model do
-  it { should have_many :items }
-  it { should have_many :invoices }
-  it { should have_many(:invoice_items).through(:invoices) }
+  describe 'Relationships' do
+    it { should have_many :items }
+    it { should have_many :invoices }
+    it { should have_many(:invoice_items).through(:invoices) }
+  end
+
+  describe 'Instance Methods' do
+    context 'Business Logic Methods' do
+      it '#total_revenue' do
+        merchant = create(:merchant)
+
+        invoice1 = create(:invoice, merchant: merchant)
+        create_list(:invoice_item, 2, invoice: invoice1, unit_price: 10.5, quantity: 2)
+        create(:transaction, invoice: invoice1, result: 'success')
+
+        invoice2 = create(:invoice, merchant: merchant)
+        create_list(:invoice_item, 2, invoice: invoice2, unit_price: 12.25, quantity: 1)
+        create(:transaction, invoice: invoice2, result: 'failed')
+
+        invoice3 = create(:invoice, merchant: merchant)
+        create_list(:invoice_item, 3, invoice: invoice3, unit_price: 15.25, quantity: 2)
+        create(:transaction, invoice: invoice3, result: 'success')
+
+        expect(merchant.total_revenue.to_f).to eq(133.5)
+      end
+    end
+  end
 
   describe 'Class Methods' do
-    describe 'Finder Methods' do
+    context 'Finder Methods' do
       it '.random' do
         m1, m2, m3 = create_list(:merchant, 3)
 
         expect(Merchant.random).to be_a(Merchant)
       end
     end
-    describe 'Business Logic Methods' do
+
+    context 'Business Logic Methods' do
       before(:each) do
       @merchant1, @merchant2, @merchant3, @merchant4 = create_list(:merchant, 4)
 
