@@ -4,17 +4,33 @@ class Merchant < ApplicationRecord
   has_many :invoice_items, through: :invoices
 
   def self.random
-    Merchant.order(Arel.sql('random()')).first
+    order(Arel.sql('random()')).first
   end
 
   def self.top_merchants_by_revenue(n)
-    Merchant.select("merchants.*, SUM(invoice_items.unit_price * invoice_items.quantity) AS revenue_total")
-            .joins("JOIN invoices ON merchants.id = invoices.merchant_id")
-            .joins("JOIN invoice_items ON invoices.id = invoice_items.invoice_id")
-            .joins("JOIN transactions ON invoices.id = transactions.invoice_id")
-            .where("transactions.result = ?", "success")
-            .group("merchants.id")
-            .order("revenue_total DESC")
-            .limit(n)
+    select("merchants.*,
+             SUM(invoice_items.unit_price * invoice_items.quantity)
+             AS revenue_total")
+      .joins(invoices: %i[invoice_items transactions])
+      .where(transactions: { result: 'success' })
+      .group(:id)
+      .order("revenue_total DESC")
+      .limit(n)
+  end
+
+  def self.most_items(n)
+    select("merchants.*, SUM(invoice_items.quantity) AS item_count")
+      .joins(invoices: %i[invoice_items transactions])
+      .where(transactions: { result: 'success' })
+      .group(:id)
+      .order("item_count DESC")
+      .limit(n)
+  end
+
+  def self.total_revenue_by_date(date)
+    joins(invoices: %i[invoice_items transactions])
+      .where(transactions: { result: 'success' })
+      .where(invoices: {updated_at: date.to_date.beginning_of_day..date.to_date.end_of_day})
+      .sum('quantity * unit_price')
   end
 end
