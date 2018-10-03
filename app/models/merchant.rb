@@ -44,4 +44,16 @@ class Merchant < ApplicationRecord
           .merge(Transaction.unscoped.successful)
           .sum('quantity * unit_price')
   end
+
+  def favorite_customer
+    Customer.unscoped
+          .select("customers.*, COUNT(invoices.id) AS order_count")
+          .joins(invoices: :transactions)
+          .where(invoices: { merchant: self })
+          .merge(Transaction.unscoped.successful)
+          .group(:id)
+          .order("order_count DESC")
+          .limit(1)
+          .first
+  end
 end

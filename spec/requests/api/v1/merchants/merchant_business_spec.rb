@@ -38,43 +38,49 @@ describe 'Merchants API' do
       create(:transaction, invoice: invoice7, result: 'success', updated_at: '2018-09-02 12:00:00 UTC')
     end
 
-    it 'returns top n merchants by total revenue' do
-      amount = 3
-      get "/api/v1/merchants/most_revenue?quantity=#{amount}"
+    context 'get /api/v1/merchants/most_revenue?quantity=n' do
+      it 'returns top n merchants by total revenue' do
+        amount = 3
+        get "/api/v1/merchants/most_revenue?quantity=#{amount}"
 
-      top_merchants = JSON.parse(response.body)
+        top_merchants = JSON.parse(response.body)
 
-      expected_result = [@merchant2, @merchant1, @merchant3].map do |merchant|
-        {
-          "id"   => merchant.id,
-          "name" => merchant.name
-        }
+        expected_result = [@merchant2, @merchant1, @merchant3].map do |merchant|
+          {
+            "id"   => merchant.id,
+            "name" => merchant.name
+          }
+        end
+
+        expect(response).to be_successful
+        expect(top_merchants.count).to eq(3)
+        expect(top_merchants).to eq(expected_result)
       end
-
-      expect(response).to be_successful
-      expect(top_merchants.count).to eq(3)
-      expect(top_merchants).to eq(expected_result)
     end
 
-    it 'returns top n merchants by number of total items sold' do
-      amount = 3
-      get "/api/v1/merchants/most_items?quantity=#{amount}"
+    context 'get /api/v1/merchants/most_items?quantity=n' do
+      it 'returns top n merchants by number of total items sold' do
+        amount = 3
+        get "/api/v1/merchants/most_items?quantity=#{amount}"
 
-      merchants_by_items = JSON.parse(response.body)
+        merchants_by_items = JSON.parse(response.body)
 
-      expect(response).to be_successful
+        expect(response).to be_successful
+      end
     end
 
-    it 'returns total revenue for date x across all merchants' do
-      test_date = '2018-09-01 12:00:00 UTC'
-      get "/api/v1/merchants/revenue?date=#{test_date}"
+    context 'get /api/v1/merchants/revenue?date=some_date' do
+      it 'returns total revenue for date x across all merchants' do
+        test_date = '2018-09-01 12:00:00 UTC'
+        get "/api/v1/merchants/revenue?date=#{test_date}"
 
-      revenue_total_by_date = JSON.parse(response.body)
+        revenue_total_by_date = JSON.parse(response.body)
 
-      expected_result = { "total_revenue" => "1095.75" }
+        expected_result = { "total_revenue" => "1095.75" }
 
-      expect(response).to be_successful
-      expect(revenue_total_by_date).to eq(expected_result)
+        expect(response).to be_successful
+        expect(revenue_total_by_date).to eq(expected_result)
+      end
     end
   end
 
@@ -82,8 +88,9 @@ describe 'Merchants API' do
     before(:each) do
       @merchant = create(:merchant)
       @date = '2018-09-02 00:00:00 UTC'
+      @customer1, @customer2 = create_list(:customer, 2)
 
-      invoice1 = create(:invoice, merchant: @merchant)
+      invoice1 = create(:invoice, merchant: @merchant, customer: @customer1)
       create_list(:invoice_item, 2, invoice: invoice1, unit_price: 10.5, quantity: 2)
       create(:transaction, invoice: invoice1, result: 'success')
 
@@ -91,9 +98,13 @@ describe 'Merchants API' do
       create_list(:invoice_item, 2, invoice: invoice2, unit_price: 12.25, quantity: 1)
       create(:transaction, invoice: invoice2, result: 'failed')
 
-      invoice3 = create(:invoice, merchant: @merchant, updated_at: @date)
+      invoice3 = create(:invoice, merchant: @merchant, customer: @customer1, updated_at: @date)
       create_list(:invoice_item, 3, invoice: invoice3, unit_price: 15.25, quantity: 2)
       create(:transaction, invoice: invoice3, result: 'success')
+
+      invoice4 = create(:invoice, merchant: @merchant, customer: @customer2)
+      create_list(:invoice_item, 2, invoice: invoice4, unit_price: 12.20, quantity: 1)
+      create(:transaction, invoice: invoice4, result: 'success')
     end
 
     context 'get /api/v1/merchants/:id/revenue' do
@@ -101,7 +112,7 @@ describe 'Merchants API' do
         get "/api/v1/merchants/#{@merchant.id}/revenue"
         total_revenue = JSON.parse(response.body)
 
-        expected_result = 133.5
+        expected_result = 157.9
 
         expect(response).to be_successful
         expect(total_revenue).to eq({ "revenue" => "#{expected_result}" })
@@ -109,7 +120,7 @@ describe 'Merchants API' do
     end
 
     context 'get /api/v1/merchants/:id/revenue?date=x' do
-      it 'returns the valid ttoal revenue for merchant on a date' do
+      it 'returns the valid total revenue for merchant on a date' do
         get "/api/v1/merchants/#{@merchant.id}/revenue?date=#{@date}"
         total_revenue_by_date = JSON.parse(response.body)
 
@@ -117,6 +128,16 @@ describe 'Merchants API' do
 
         expect(response).to be_successful
         expect(total_revenue_by_date).to eq({ "revenue" => "#{expected_result}" })
+      end
+    end
+
+    context 'get /api/v1/merchants/:id/favorite_customer' do
+      it 'returns customer with highest successful transactions' do
+        get "/api/v1/merchants/#{@merchant.id}/favorite_customer"
+        favorite_customer = JSON.parse(response.body)
+
+        expect(response).to be_successful
+        expect(favorite_customer['id']).to eq(@customer1.id)
       end
     end
   end

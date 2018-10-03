@@ -8,23 +8,42 @@ RSpec.describe Merchant, type: :model do
   end
 
   describe 'Instance Methods' do
+    before(:each) do
+      @merchant = create(:merchant)
+      @date = '2018-09-02 00:00:00 UTC'
+      @customer1, @customer2 = create_list(:customer, 2)
+
+      invoice1 = create(:invoice, merchant: @merchant, customer: @customer1)
+      create_list(:invoice_item, 2, invoice: invoice1, unit_price: 10.5, quantity: 2)
+      create(:transaction, invoice: invoice1, result: 'success')
+
+      invoice2 = create(:invoice, merchant: @merchant)
+      create_list(:invoice_item, 2, invoice: invoice2, unit_price: 12.25, quantity: 1)
+      create(:transaction, invoice: invoice2, result: 'failed')
+
+      invoice3 = create(:invoice, merchant: @merchant, customer: @customer1, updated_at: @date)
+      create_list(:invoice_item, 3, invoice: invoice3, unit_price: 15.25, quantity: 2)
+      create(:transaction, invoice: invoice3, result: 'success')
+
+      invoice4 = create(:invoice, merchant: @merchant, customer: @customer2)
+      create_list(:invoice_item, 2, invoice: invoice4, unit_price: 12.20, quantity: 1)
+      create(:transaction, invoice: invoice4, result: 'success')
+    end
     context 'Business Logic Methods' do
       it '#total_revenue' do
-        merchant = create(:merchant)
+        expect(@merchant.total_revenue.to_f).to eq(157.9)
+      end
 
-        invoice1 = create(:invoice, merchant: merchant)
-        create_list(:invoice_item, 2, invoice: invoice1, unit_price: 10.5, quantity: 2)
-        create(:transaction, invoice: invoice1, result: 'success')
+      it '#total_revenue(date)' do
+        parameter = {
+          invoices: { updated_at: @date.to_date.beginning_of_day..@date.to_date.end_of_day }
+        }
 
-        invoice2 = create(:invoice, merchant: merchant)
-        create_list(:invoice_item, 2, invoice: invoice2, unit_price: 12.25, quantity: 1)
-        create(:transaction, invoice: invoice2, result: 'failed')
+        expect(@merchant.total_revenue(parameter).to_f).to eq(91.5)
+      end
 
-        invoice3 = create(:invoice, merchant: merchant)
-        create_list(:invoice_item, 3, invoice: invoice3, unit_price: 15.25, quantity: 2)
-        create(:transaction, invoice: invoice3, result: 'success')
-
-        expect(merchant.total_revenue.to_f).to eq(133.5)
+      it '#favorite_customer' do
+        expect(@merchant.favorite_customer.id).to eq(@customer1.id)
       end
     end
   end
