@@ -23,7 +23,7 @@ describe 'Merchants API' do
   end
 
   it 'can find merchant by created at timestamp' do
-    date = create(:merchant, created_at: '2017-01-01 00:00:00').created_at
+    date = create(:merchant).created_at
 
     get "/api/v1/merchants/find?created_at=#{date}"
 
@@ -34,7 +34,7 @@ describe 'Merchants API' do
   end
 
   it 'can find merchant by updated at timestamp' do
-    date = create(:merchant, updated_at: '2017-01-01 00:00:00').updated_at
+    date = create(:merchant).updated_at
 
     get "/api/v1/merchants/find?updated_at=#{date}"
 
