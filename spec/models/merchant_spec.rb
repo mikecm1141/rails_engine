@@ -11,13 +11,13 @@ RSpec.describe Merchant, type: :model do
     before(:each) do
       @merchant = create(:merchant)
       @date = '2018-09-02 00:00:00 UTC'
-      @customer1, @customer2 = create_list(:customer, 2)
+      @customer1, @customer2, @customer3, @customer4 = create_list(:customer, 4)
 
       invoice1 = create(:invoice, merchant: @merchant, customer: @customer1)
       create_list(:invoice_item, 2, invoice: invoice1, unit_price: 10.5, quantity: 2)
       create(:transaction, invoice: invoice1, result: 'success')
 
-      invoice2 = create(:invoice, merchant: @merchant)
+      invoice2 = create(:invoice, merchant: @merchant, customer: @customer3)
       create_list(:invoice_item, 2, invoice: invoice2, unit_price: 12.25, quantity: 1)
       create(:transaction, invoice: invoice2, result: 'failed')
 
@@ -28,8 +28,17 @@ RSpec.describe Merchant, type: :model do
       invoice4 = create(:invoice, merchant: @merchant, customer: @customer2)
       create_list(:invoice_item, 2, invoice: invoice4, unit_price: 12.20, quantity: 1)
       create(:transaction, invoice: invoice4, result: 'success')
+
+      invoice5 = create(:invoice, merchant: @merchant, customer: @customer4)
+      create(:transaction, invoice: invoice5, result: 'failed')
+
     end
     context 'Business Logic Methods' do
+      it '#customers_with_pending_invoices' do
+        expect(@merchant.customers_with_pending_invoices.count).to eq(2)
+        expect(@merchant.customers_with_pending_invoices.sort).to eq([@customer3, @customer4])
+      end
+
       it '#total_revenue' do
         expect(@merchant.total_revenue.to_f).to eq(157.9)
       end
