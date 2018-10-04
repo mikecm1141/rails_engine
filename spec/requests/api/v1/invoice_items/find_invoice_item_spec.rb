@@ -1,12 +1,5 @@
 require 'rails_helper'
 
-    # t.bigint "item_id"
-    # t.bigint "invoice_id"
-    # t.integer "quantity"
-    # t.decimal "unit_price", precision: 8, scale: 2
-    # t.datetime "created_at", null: false
-    # t.datetime "updated_at", null: false
-
 describe 'Invoice Item API' do
   context 'get /api/v1/invoice_items/find?id=invoice_item_id' do
     it 'can find invoice_item by its id' do
