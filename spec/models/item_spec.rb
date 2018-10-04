@@ -61,7 +61,7 @@ RSpec.describe Item, type: :model do
         create(:invoice_item, invoice: invoice3, item: item, quantity: 5)
         create(:transaction, invoice: invoice3, result: 'success')
 
-        expect(item.best_day).to eq(invoice3.created_at)
+        expect(Item.best_day(item.id)).to eq(invoice3.created_at)
       end
     end
   end

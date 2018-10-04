@@ -28,12 +28,12 @@ class Item < ApplicationRecord
       .limit(n)
   end
 
-  def best_day
+  def self.best_day(item_id)
     Invoice.unscoped
           .select("invoices.*, SUM(invoice_items.quantity) AS quantity_sold")
           .joins(:invoice_items, :transactions)
           .merge(Transaction.unscoped.successful)
-          .where(invoice_items: { item: self })
+          .where(invoice_items: { item_id: item_id })
           .group(:id)
           .order("quantity_sold DESC, created_at DESC")
           .limit(1)

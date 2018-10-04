@@ -35,12 +35,12 @@ RSpec.describe Merchant, type: :model do
     end
     context 'Business Logic Methods' do
       it '#customers_with_pending_invoices' do
-        expect(@merchant.customers_with_pending_invoices.count).to eq(2)
-        expect(@merchant.customers_with_pending_invoices.sort).to eq([@customer3, @customer4])
+        expect(Merchant.customers_with_pending_invoices(@merchant.id).count).to eq(2)
+        expect(Merchant.customers_with_pending_invoices(@merchant.id).sort).to eq([@customer3, @customer4])
       end
 
       it '#total_revenue' do
-        expect(@merchant.total_revenue.to_f).to eq(157.9)
+        expect(Merchant.total_revenue(@merchant.id).to_f).to eq(157.9)
       end
 
       it '#total_revenue(date)' do
@@ -48,11 +48,11 @@ RSpec.describe Merchant, type: :model do
           invoices: { updated_at: @date.to_date.beginning_of_day..@date.to_date.end_of_day }
         }
 
-        expect(@merchant.total_revenue(parameter).to_f).to eq(91.5)
+        expect(Merchant.total_revenue(@merchant.id, parameter).to_f).to eq(91.5)
       end
 
       it '#favorite_customer' do
-        expect(@merchant.favorite_customer.id).to eq(@customer1.id)
+        expect(Merchant.favorite_customer(@merchant.id).id).to eq(@customer1.id)
       end
     end
   end

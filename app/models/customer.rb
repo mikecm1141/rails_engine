@@ -5,12 +5,12 @@ class Customer < ApplicationRecord
   
   default_scope { order(id: :asc) }
 
-  def favorite_merchant
+  def self.favorite_merchant(customer_id)
     Merchant
       .unscoped
       .select("merchants.*, COUNT(invoices.id) AS invoice_count")
       .joins(invoices: :transactions)
-      .where(invoices: { customer: self })
+      .where(invoices: { customer_id: customer_id })
       .merge(Transaction.unscoped.successful)
       .group(:id).order("invoice_count DESC")
       .limit(1)
