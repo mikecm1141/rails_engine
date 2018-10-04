@@ -5,10 +5,6 @@ class Merchant < ApplicationRecord
 
   default_scope { order(id: :asc) }
 
-  def self.random
-    order(Arel.sql('random()')).first
-  end
-
   def self.top_merchants_by_revenue(n = 5)
     unscoped
       .select("merchants.*, SUM(invoice_items.unit_price * invoice_items.quantity) AS revenue_total")

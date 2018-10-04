@@ -4,10 +4,6 @@ class Item < ApplicationRecord
 
   default_scope { order(id: :asc) }
 
-  def self.random
-    order(Arel.sql('random()')).first
-  end
-
   def self.top_items_by_revenue(n = 5)
     unscoped
       .select("items.*, SUM(invoice_items.unit_price * invoice_items.quantity) AS item_revenue")

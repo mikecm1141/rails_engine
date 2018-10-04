@@ -9,7 +9,7 @@ RSpec.describe Item, type: :model do
   describe 'Class Methods' do
     context 'Finder Methods' do
       it '.random' do
-        m1, m2, m3 = create_list(:item, 3)
+        i1, i2, i3 = create_list(:item, 3)
 
         expect(Item.random).to be_a(Item)
       end
