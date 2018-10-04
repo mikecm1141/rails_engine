@@ -88,13 +88,13 @@ describe 'Merchants API' do
     before(:each) do
       @merchant = create(:merchant)
       @date = '2018-09-02 00:00:00 UTC'
-      @customer1, @customer2 = create_list(:customer, 2)
+      @customer1, @customer2, @customer3, @customer4 = create_list(:customer, 4)
 
       invoice1 = create(:invoice, merchant: @merchant, customer: @customer1)
       create_list(:invoice_item, 2, invoice: invoice1, unit_price: 10.5, quantity: 2)
       create(:transaction, invoice: invoice1, result: 'success')
 
-      invoice2 = create(:invoice, merchant: @merchant)
+      invoice2 = create(:invoice, merchant: @merchant, customer: @customer3)
       create_list(:invoice_item, 2, invoice: invoice2, unit_price: 12.25, quantity: 1)
       create(:transaction, invoice: invoice2, result: 'failed')
 
@@ -105,6 +105,19 @@ describe 'Merchants API' do
       invoice4 = create(:invoice, merchant: @merchant, customer: @customer2)
       create_list(:invoice_item, 2, invoice: invoice4, unit_price: 12.20, quantity: 1)
       create(:transaction, invoice: invoice4, result: 'success')
+
+      invoice5 = create(:invoice, merchant: @merchant, customer: @customer4)
+      create(:transaction, invoice: invoice5, result: 'failed')
+    end
+
+    context 'get /api/v1/merchants/:id/revenue' do
+      it 'returns customers with pending invoices' do
+        get "/api/v1/merchants/#{@merchant.id}/customers_with_pending_invoices"
+        customers = JSON.parse(response.body)
+
+        expect(response).to be_successful
+        expect(customers.count).to eq(2)
+      end
     end
 
     context 'get /api/v1/merchants/:id/revenue' do

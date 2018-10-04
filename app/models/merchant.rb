@@ -5,6 +5,20 @@ class Merchant < ApplicationRecord
 
   default_scope { order(id: :asc) }
 
+  def customers_with_pending_invoices
+    Customer.find_by_sql("SELECT customers.* FROM customers 
+      INNER JOIN invoices ON customers.id=invoices.customer_id 
+      INNER JOIN transactions ON transactions.invoice_id=invoices.id 
+      INNER JOIN merchants ON merchants.id=invoices.merchant_id 
+      WHERE merchants.id=#{self.id} AND transactions.result='failed'
+      EXCEPT 
+      SELECT customers.* FROM customers 
+      INNER JOIN invoices ON customers.id=invoices.customer_id 
+      INNER JOIN transactions ON transactions.invoice_id=invoices.id 
+      INNER JOIN merchants ON merchants.id=invoices.merchant_id 
+      WHERE merchants.id=#{self.id} AND transactions.result='success'")
+  end
+
   def self.top_merchants_by_revenue(n = 5)
     unscoped
       .select("merchants.*, SUM(invoice_items.unit_price * invoice_items.quantity) AS revenue_total")
