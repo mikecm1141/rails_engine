@@ -37,33 +37,57 @@ describe 'Invoice Items API' do
     end
   end
 
-  # context 'get /api/v1/invoices/find_all?created_at=created_at date' do
-  #   it 'can find all invoices by created at' do
-  #     m1, m2, m3 = create_list(:invoice, 3, created_at: '2018-01-01 00:00:00')
-  #     m4 = create(:invoice, created_at: '2017-01-02 00:00:00')
+  context 'get /api/v1/invoice_items/find_all?quantity=invoice_item_quantity' do
+    it 'can find all invoice_items by quantity' do
+      i1, i2, i3 = create_list(:invoice_item, 3)
 
-  #     get "/api/v1/invoices/find_all?created_at=#{m1.created_at}"
-  #     invoices = JSON.parse(response.body)
+      get "/api/v1/invoice_items/find_all?quantity=#{i1.quantity}"
+      invoice_items = JSON.parse(response.body)
 
-  #     expected_result = [invoices[0]['id'], invoices[1]['id'], invoices[2]['id']]
+      expect(response).to be_successful
+      expect(invoice_items.first['quantity']).to eq(i1.quantity)
+    end
+  end
 
-  #     expect(response).to be_successful
-  #     expect(expected_result).to eq([m1.id, m2.id, m3.id])
-  #   end
-  # end
+  context 'get /api/v1/invoice_items/find_all?unit_price=invoice_item_unit_price' do
+    it 'can find all invoice_items by unit_price' do
+      i1, i2, i3 = create_list(:invoice_item, 3)
 
-  # context 'get /api/v1/invoices/find_all?updated_at=updated_at date' do
-  #   it 'can find all invoices by updated at' do
-  #     m1, m2, m3 = create_list(:invoice, 3, updated_at: '2018-01-01 00:00:00')
-  #     m4 = create(:invoice, updated_at: '2017-01-02 00:00:00')
+      get "/api/v1/invoice_items/find_all?unit_price=#{i1.unit_price}"
+      invoice_items = JSON.parse(response.body)
 
-  #     get "/api/v1/invoices/find_all?updated_at=#{m1.updated_at}"
-  #     invoices = JSON.parse(response.body)
+      expect(response).to be_successful
+      expect(invoice_items.first['unit_price']).to eq("#{i1.unit_price}")
+    end
+  end
 
-  #     expected_result = [invoices[0]['id'], invoices[1]['id'], invoices[2]['id']]
+  context 'get /api/v1/invoice_items/find_all?created_at=created_at date' do
+    it 'can find all invoice_items by created at' do
+      invoice_item1, invoice_item2, invoice_item3 = create_list(:invoice_item, 3, created_at: '2018-01-01 00:00:00')
+      m4 = create(:invoice_item, created_at: '2017-01-02 00:00:00')
 
-  #     expect(response).to be_successful
-  #     expect(expected_result).to eq([m1.id, m2.id, m3.id])
-  #   end
-  # end
+      get "/api/v1/invoice_items/find_all?created_at=#{invoice_item1.created_at}"
+      invoice_items = JSON.parse(response.body)
+
+      expected_result = [invoice_items[0]['id'], invoice_items[1]['id'], invoice_items[2]['id']]
+
+      expect(response).to be_successful
+      expect(expected_result).to eq([invoice_item1.id, invoice_item2.id, invoice_item3.id])
+    end
+  end
+
+  context 'get /api/v1/invoice_items/find_all?updated_at=updated_at date' do
+    it 'can find all invoice_items by updated at' do
+      invoice_item1, invoice_item2, invoice_item3 = create_list(:invoice_item, 3, updated_at: '2018-01-01 00:00:00')
+      m4 = create(:invoice_item, updated_at: '2017-01-02 00:00:00')
+
+      get "/api/v1/invoice_items/find_all?updated_at=#{invoice_item1.updated_at}"
+      invoice_items = JSON.parse(response.body)
+
+      expected_result = [invoice_items[0]['id'], invoice_items[1]['id'], invoice_items[2]['id']]
+
+      expect(response).to be_successful
+      expect(expected_result).to eq([invoice_item1.id, invoice_item2.id, invoice_item3.id])
+    end
+  end
 end
