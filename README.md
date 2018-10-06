@@ -27,7 +27,7 @@ Visiting `/api/v1/merchants/` returns:
 ```
 
 ### Find a merchant by name
-Visiting '/api/v1/merchants/find?name=Kozey%20Group' returns:
+Visiting `/api/v1/merchants/find?name=Kozey%20Group` returns:
 ```json
 {
   "id":12,
