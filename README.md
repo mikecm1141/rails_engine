@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/mikecm1141/rails_engine.svg?branch=master)](https://travis-ci.org/mikecm1141/rails_engine)
+[![Test Coverage](https://img.shields.io/badge/coverage-100%25-green.svg)](https://codecov.io/gh/mikecm1141/rails_engine)
 [![Ruby Version](https://img.shields.io/badge/ruby-2.5.1-red.svg)](https://img.shields.io/badge/ruby-2.5.1-red.svg)
 [![Rails Version](https://img.shields.io/badge/rails-%3E%3D%205.2-red.svg)](https://img.shields.io/badge/rails-%3E%3D%205.2-red.svg)
 
