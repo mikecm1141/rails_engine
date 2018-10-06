@@ -25,4 +25,6 @@ group :development do
   gem 'bullet'
 end
 
+gem 'codecov', :require => false, :group => :test
+
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
