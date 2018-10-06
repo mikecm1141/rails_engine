@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/mikecm1141/rails_engine.svg?branch=master)](https://travis-ci.org/mikecm1141/rails_engine)
-[(https://img.shields.io/badge/ruby-2.5.1-red.svg)]
+[![Ruby Version](https://img.shields.io/badge/ruby-2.5.1-red.svg)](https://img.shields.io/badge/ruby-2.5.1-red.svg)
 
 # Rails Engine README
 
