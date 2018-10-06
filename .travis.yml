@@ -1,6 +1,9 @@
 language: ruby
-rvm:
+rbenv:
  - 2.5.1
 
 services:
  - postgresql
+
+before_script:
+  - rake db:{drop,create,migrate}
