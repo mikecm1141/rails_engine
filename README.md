@@ -23,7 +23,6 @@ Visiting `/api/v1/merchants/` returns:
     "id":3,
     "name":"Willms and Sons"
    }
-...
 ]
 ```
 
