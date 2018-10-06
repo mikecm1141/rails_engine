@@ -125,7 +125,7 @@ describe 'Merchants API' do
         get "/api/v1/merchants/#{@merchant.id}/revenue"
         total_revenue = JSON.parse(response.body)
 
-        expected_result = 157.9
+        expected_result = '157.90'
 
         expect(response).to be_successful
         expect(total_revenue).to eq({ "revenue" => "#{expected_result}" })
@@ -137,7 +137,7 @@ describe 'Merchants API' do
         get "/api/v1/merchants/#{@merchant.id}/revenue?date=#{@date}"
         total_revenue_by_date = JSON.parse(response.body)
 
-        expected_result = 91.5
+        expected_result = '91.50'
 
         expect(response).to be_successful
         expect(total_revenue_by_date).to eq({ "revenue" => "#{expected_result}" })
