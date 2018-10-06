@@ -1,7 +1,7 @@
-# README
+[![Build Status](https://travis-ci.org/mikecm1141/rails_engine.svg?branch=master)](https://travis-ci.org/mikecm1141/rails_engine)
+[(https://img.shields.io/badge/ruby-2.5.1-red.svg)]
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+# Rails Engine README
 
 Things you may want to cover:
 
